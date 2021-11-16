@@ -183,6 +183,7 @@ node_identifier = str(uuid4()).replace('-', '')
 # Instantiate the Blockchain
 blockchain = Blockchain()
 
+
 @app.route('/mine', methods=['GET'])
 def mine():
     # We run the proof of work algorithm to get the next proof...
@@ -211,12 +212,15 @@ def mine():
     }
 
     return jsonify(response), 200
-# TODO: get_json函数可嫩肤有问题
+
+
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
-    values = request.get_json()
+    # 得到字符串
+    values = request.get_data().decode()
 
-    print(values)
+    # 将字符串转换为json
+    values = json.loads(values)
 
     # Check that the required fields are in the POST'ed data
     required = ['sender', 'recipient', 'amount']
@@ -224,10 +228,12 @@ def new_transaction():
         return 'Missing values', 400
 
     # Create a new Transaction
-    index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
+    index = blockchain.new_transaction(values['sender'], values['recipient'],
+                                       values['amount'])
 
     response = {'message': f'Transaction will be added to Block {index}'}
     return jsonify(response), 201
+
 
 @app.route('/chain', methods=['GET'])
 def full_chain():
@@ -237,9 +243,14 @@ def full_chain():
     }
     return jsonify(response), 200
 
+
 @app.route('/nodes/register', methods=['POST'])
 def register_nodes():
-    values = request.get_json()
+    # 得到字符串
+    values = request.get_data().decode()
+
+    # 将字符串转换为json
+    values = json.loads(values)
 
     nodes = values.get('nodes')
     if nodes is None:
@@ -253,6 +264,7 @@ def register_nodes():
         'total_nodes': list(blockchain.nodes),
     }
     return jsonify(response), 201
+
 
 @app.route('/nodes/resolve', methods=['GET'])
 def consensus():
@@ -270,6 +282,7 @@ def consensus():
         }
 
     return jsonify(response), 200
+
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000)
