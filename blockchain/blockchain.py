@@ -183,6 +183,7 @@ node_identifier = str(uuid4()).replace('-', '')
 # Instantiate the Blockchain
 blockchain = Blockchain()
 
+
 @app.route('/mine', methods=['GET'])
 def mine():
     # We run the proof of work algorithm to get the next proof...
@@ -211,7 +212,9 @@ def mine():
     }
 
     return jsonify(response), 200
-# TODO: get_json函数可嫩肤有问题
+
+
+# TODO: get_json函数可能有问题
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
     values = request.get_json()
@@ -224,10 +227,12 @@ def new_transaction():
         return 'Missing values', 400
 
     # Create a new Transaction
-    index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
+    index = blockchain.new_transaction(values['sender'], values['recipient'],
+                                       values['amount'])
 
     response = {'message': f'Transaction will be added to Block {index}'}
     return jsonify(response), 201
+
 
 @app.route('/chain', methods=['GET'])
 def full_chain():
@@ -236,6 +241,7 @@ def full_chain():
         'length': len(blockchain.chain),
     }
     return jsonify(response), 200
+
 
 @app.route('/nodes/register', methods=['POST'])
 def register_nodes():
@@ -254,6 +260,7 @@ def register_nodes():
     }
     return jsonify(response), 201
 
+
 @app.route('/nodes/resolve', methods=['GET'])
 def consensus():
     replaced = blockchain.resolve_conflicts()
@@ -270,6 +277,7 @@ def consensus():
         }
 
     return jsonify(response), 200
+
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000)
