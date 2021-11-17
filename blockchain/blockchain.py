@@ -214,12 +214,13 @@ def mine():
     return jsonify(response), 200
 
 
-# TODO: get_json函数可能有问题
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
-    values = request.get_json()
+    # 得到字符串
+    values = request.get_data().decode()
 
-    print(values)
+    # 将字符串转换为json
+    values = json.loads(values)
 
     # Check that the required fields are in the POST'ed data
     required = ['sender', 'recipient', 'amount']
@@ -245,7 +246,11 @@ def full_chain():
 
 @app.route('/nodes/register', methods=['POST'])
 def register_nodes():
-    values = request.get_json()
+    # 得到字符串
+    values = request.get_data().decode()
+
+    # 将字符串转换为json
+    values = json.loads(values)
 
     nodes = values.get('nodes')
     if nodes is None:
